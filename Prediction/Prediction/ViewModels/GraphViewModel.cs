@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using OxyPlot;
 using OxyPlot.Series;
+using Prediction.Core.Curve;
 using Prediction.ViewModels.Abstraction;
 using Prediction.Core.Curve.Abstraction;
+using Prediction.Core.Curve.Extremes.Abstraction;
 
 namespace Prediction.ViewModels
 {
@@ -115,22 +117,37 @@ namespace Prediction.ViewModels
                 44, 40, 36, 28, 24, 22, 22, 20, 16, 16, 10, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8
             };
 
-        public GraphViewModel(IDataSmoother smoother)
+        public GraphViewModel(IDataSmoother smoother, IExtremes extreme)
         {
             this.OxyGraph = new PlotModel { Title = "Graph 1" };
-            LineSeries series = new LineSeries();
+            LineSeries curve = new LineSeries();
+            LineSeries extremes = new LineSeries();
             //series.MarkerType = MarkerType.Circle;
             //series.LineStyle = LineStyle.None;
 
-            var res = smoother.Smooth(Data);
+            var curveData = smoother.Smooth(Data);
             for (int i = 0; i < Data.Length; i++)
             {
-                series.Points.Add(new DataPoint(i,res[i]));
+                curve.Points.Add(new DataPoint(i, curveData[i]));
             }
 
-            series.Title = "Smoothed points";
+            var extremeData = extreme.LocalMaximas(curveData);
 
-            OxyGraph.Series.Add(series);
+            foreach (var t in extremeData)
+            {
+                extremes.Points.Add(new DataPoint(t.Time, t.Extreme));
+            }
+
+            extremes.MarkerType = MarkerType.Circle;
+            extremes.LineStyle = LineStyle.None;
+            extremes.Color = OxyColors.Black;
+
+            curve.Color = OxyColors.Blue;
+            curve.Title = "Smoothed points";
+            extremes.Title = "Extremes";
+
+            OxyGraph.Series.Add(curve);
+            OxyGraph.Series.Add(extremes);
         }
 
         private double Test(double input)

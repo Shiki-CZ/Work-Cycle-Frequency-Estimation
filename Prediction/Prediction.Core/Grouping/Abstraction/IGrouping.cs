@@ -8,6 +8,6 @@ namespace Prediction.Core.Grouping.Abstraction
 {
     internal interface IGrouping
     {
-        public float[] MakeGroup(float[] data);
+        public float[] GroupArray(float[] data);
     }
 }

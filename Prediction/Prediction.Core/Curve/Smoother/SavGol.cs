@@ -28,7 +28,6 @@ public class SavGol : IDataSmoother
 
         var floats = output.Select(item => (float)item).ToArray();
 
-
         return floats;
 
     }

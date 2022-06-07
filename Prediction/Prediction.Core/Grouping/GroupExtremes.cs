@@ -9,7 +9,7 @@ namespace Prediction.Core.Grouping
 {
     internal class GroupExtremes : IGrouping
     {
-        public float[] MakeGroup(float[] data)
+        public float[] GroupArray(float[] data)
         {
             throw new NotImplementedException();
         }

@@ -12,7 +12,7 @@ namespace Prediction.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private bool _isVisible = false;
-        public string HeaderName { get; set; } = "My Tab Bajč";
+        public string HeaderName { get; set; } = "My Tab Bjač";
         public bool IsVisible
         {
             get => _isVisible;

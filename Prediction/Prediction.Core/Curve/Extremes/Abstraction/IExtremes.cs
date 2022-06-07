@@ -9,9 +9,9 @@ namespace Prediction.Core.Curve.Extremes.Abstraction
     public interface IExtremes
     {
 
-        public int[] LocalMaximas(int[] data);
+        public GroupArray[] LocalMaximas(float[] data);
 
-        public int[] ExtremeGroups(int[] data);
+        public GroupArray[] ExtremeGroups(GroupArray[] data);
 
         public int[] MergeExtremeGroups(int[] data);
     }
