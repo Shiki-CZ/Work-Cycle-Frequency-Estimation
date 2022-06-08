@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 using Prediction.Core.Curve;
 using Prediction.ViewModels.Abstraction;
@@ -119,7 +120,7 @@ namespace Prediction.ViewModels
 
         public GraphViewModel(IDataSmoother smoother, IExtremes extreme)
         {
-            this.OxyGraph = new PlotModel { Title = "Graph 1" };
+            this.OxyGraph = new PlotModel { Title = "Local Extremes" };
             LineSeries curve = new LineSeries();
             LineSeries extremes = new LineSeries();
             //series.MarkerType = MarkerType.Circle;
@@ -148,6 +149,8 @@ namespace Prediction.ViewModels
 
             OxyGraph.Series.Add(curve);
             OxyGraph.Series.Add(extremes);
+            OxyGraph.Axes.Add(new LinearAxis{Position = AxisPosition.Bottom, Title = "Time [s]"});
+            OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Voxel Count [-]" });
         }
 
         private double Test(double input)
