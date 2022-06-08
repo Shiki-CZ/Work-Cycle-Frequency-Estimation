@@ -30,23 +30,25 @@ namespace Prediction.Core.Curve.Extremes
         {
             //throw new NotImplementedException();
             float peakThresh = 0.12f;
-            var ExtremesList = new List<float> { data.Extreme[0] };
-            var TimeList = new List<float> { data.Time[0] };
+            var ExtremesList = new List<GroupArray> { data[0] };
+            var TimeList = new List<float> { data[0].Time };
 
             for (int i = 1; i <= data.Length - 1 ; i++)
             {
-                float peak = data.Extreme[i];
+                float peak = data[i].Extreme;
                 bool write = false;
                 for (int j = 0; j < ExtremesList.Count; j++)
                 {
                     float controlPeak;
-                    controlPeak = ExtremesList.Average();
+                    controlPeak = ExtremesList.Average(i=> i.Extreme);
                     if (controlPeak - controlPeak * peakThresh <= peak && peak < controlPeak + controlPeak * peakThresh)
                     {
                         ExtremesList.Sort();
                     }
                 }
             }
+
+            ExtremesList.OrderBy(x=> x.Extreme);
 
             return data;
         }
