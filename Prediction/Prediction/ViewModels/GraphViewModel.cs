@@ -133,17 +133,25 @@ namespace Prediction.ViewModels
             }
 
             var extremeData = extreme.LocalMaximas(curveData);
-
+            var extremeGroup = extreme.ExtremeGroups(extremeData);
+            /*
             foreach (var t in extremeData)
             {
                 extremes.Points.Add(new DataPoint(t.Time, t.Extreme));
             }
-
+            */
+            foreach (var t in extremeGroup)
+            {
+                if (t.ExtremeGroup == 2)
+                {
+                    extremes.Points.Add(new DataPoint(t.Time, t.Extreme));
+                }
+            }
             extremes.MarkerType = MarkerType.Circle;
             extremes.LineStyle = LineStyle.None;
             extremes.Color = OxyColors.Black;
 
-            curve.Color = OxyColors.Blue;
+            curve.Color = OxyColors.Yellow;
             curve.Title = "Smoothed points";
             extremes.Title = "Extremes";
 
