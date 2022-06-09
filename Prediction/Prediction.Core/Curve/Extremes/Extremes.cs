@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,31 +27,41 @@ namespace Prediction.Core.Curve.Extremes
             return Extremes.ToArray();
         }
 
-        public GroupArray[] ExtremeGroups(GroupArray[] data)
+        public GroupArray[] ExtremeGroups(IEnumerable<GroupArray> data)
         {
-            //throw new NotImplementedException();
             float peakThresh = 0.12f;
-            var ExtremesList = new List<GroupArray> { data[0] };
-            var TimeList = new List<float> { data[0].Time };
 
-            for (int i = 1; i <= data.Length - 1 ; i++)
+            var extremesAscend = data.OrderBy(data => data.Extreme).ToArray();
+            extremesAscend[0].ExtremeGroup = 1;
+            int groups = 1;
+            int counter = 1;
+            float average = extremesAscend[0].Extreme;
+
+            for (int i = 1; i <= extremesAscend.Length - 1; i++)
             {
-                float peak = data[i].Extreme;
-                bool write = false;
-                for (int j = 0; j < ExtremesList.Count; j++)
+                if (extremesAscend[i].Extreme < average + average*peakThresh)
                 {
-                    float controlPeak;
-                    controlPeak = ExtremesList.Average(i=> i.Extreme);
-                    if (controlPeak - controlPeak * peakThresh <= peak && peak < controlPeak + controlPeak * peakThresh)
+                    extremesAscend[i].ExtremeGroup = groups;
+
+                    for (int element = 1; element <= extremesAscend.Length - 1; element++)
                     {
-                        ExtremesList.Sort();
+                        if (extremesAscend[element].ExtremeGroup == groups)
+                        {
+                            counter++;
+                            average = (average + extremesAscend[element].Extreme) / counter;
+                        }
                     }
+                }
+                else
+                {
+                    groups++;
+                    counter = 1;
+                    extremesAscend[i].ExtremeGroup = groups;
+                    average = extremesAscend[i].Extreme;
                 }
             }
 
-            ExtremesList.OrderBy(x=> x.Extreme);
-
-            return data;
+            return extremesAscend;
         }
 
         public int[] MergeExtremeGroups(int[] data)
@@ -65,4 +76,5 @@ namespace Prediction.Core.Curve.Extremes
         public float Extreme { get; set; }
         public int ExtremeGroup { get; set; }
     }
+
 }

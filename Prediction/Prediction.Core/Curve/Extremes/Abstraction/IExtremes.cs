@@ -11,7 +11,7 @@ namespace Prediction.Core.Curve.Extremes.Abstraction
 
         public GroupArray[] LocalMaximas(float[] data);
 
-        public GroupArray[] ExtremeGroups(GroupArray[] data);
+        public GroupArray[] ExtremeGroups(IEnumerable<GroupArray> data);
 
         public int[] MergeExtremeGroups(int[] data);
     }
