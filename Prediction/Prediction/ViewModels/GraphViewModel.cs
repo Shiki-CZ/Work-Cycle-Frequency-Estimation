@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Prediction.Core.Curve;
 using Prediction.ViewModels.Abstraction;
@@ -122,7 +123,7 @@ namespace Prediction.ViewModels
         {
             this.OxyGraph = new PlotModel { Title = "Local Extremes" };
             LineSeries curve = new LineSeries();
-            LineSeries extremes = new LineSeries();
+            //LineSeries extremes = new LineSeries();
             //series.MarkerType = MarkerType.Circle;
             //series.LineStyle = LineStyle.None;
 
@@ -134,31 +135,86 @@ namespace Prediction.ViewModels
 
             var extremeData = extreme.LocalMaximas(curveData);
             var extremeGroup = extreme.ExtremeGroups(extremeData);
-            /*
-            foreach (var t in extremeData)
+
+            List<LineSeries> extremes = new List<LineSeries>();
+
+            int colorMax = extremeGroup.Last().ExtremeGroup;
+            float colorStep = 255 / colorMax;
+
+            List<OxyColor> colors = new List<OxyColor>();
+
+            for (int colorNumber = 0; colorNumber < colorMax; colorNumber++)
             {
-                extremes.Points.Add(new DataPoint(t.Time, t.Extreme));
+                int r = 255 - (colorNumber * (int)colorStep);
+                int g = 255 * (int)(Math.Sin((colorNumber/2 * (int)colorStep*2)*(Math.PI/colorMax)));
+                int b = (colorNumber * (int)colorStep);
+                colors.Add( OxyColor.FromRgb((byte)r, (byte)g, (byte)b));
             }
-            */
-            foreach (var t in extremeGroup)
+
+            for (int group = 0; group < extremeGroup.Last().ExtremeGroup; group++)
             {
-                if (t.ExtremeGroup == 2)
+                if (colors.Count == group)
                 {
-                    extremes.Points.Add(new DataPoint(t.Time, t.Extreme));
+                    break;
                 }
+
+                var extremeSeries = new LineSeries();
+                extremeSeries.MarkerType = MarkerType.Circle;
+                extremeSeries.LineStyle = LineStyle.None;
+                extremeSeries.Color = colors[group];
+                extremeSeries.Title = "Extremes Group " + group.ToString();
+                float min = 1000;
+                float max = -1;
+                float time = 0;
+                foreach (var item in extremeGroup)
+                {
+                    if (group + 1 == item.ExtremeGroup)
+                    {
+                        extremeSeries.Points.Add(new DataPoint(item.Time, item.Extreme));
+                        if (item.Extreme < min)
+                            min = item.Extreme;
+                        if (item.Extreme > max)
+                            max = item.Extreme;
+                    }
+                    if (item.Time > time)
+                        time = item.Time;
+                }
+
+                extremes.Add(extremeSeries);
+                var maxLineDelimiter = new LineSeries();
+                maxLineDelimiter.Color = colors[group];
+                maxLineDelimiter.Points.Add(new DataPoint(0, max));
+                maxLineDelimiter.Points.Add(new DataPoint(time, max));
+                maxLineDelimiter.StrokeThickness = 1;
+                extremes.Add(maxLineDelimiter);
+
+                var minLineDelimiter = new LineSeries();
+                minLineDelimiter.Color = colors[group];
+                minLineDelimiter.Points.Add(new DataPoint(0, min));
+                minLineDelimiter.Points.Add(new DataPoint(time, min));
+                minLineDelimiter.StrokeThickness = 1;
+                extremes.Add(minLineDelimiter);
+
             }
-            extremes.MarkerType = MarkerType.Circle;
-            extremes.LineStyle = LineStyle.None;
-            extremes.Color = OxyColors.Black;
 
             curve.Color = OxyColors.Yellow;
             curve.Title = "Smoothed points";
-            extremes.Title = "Extremes";
 
             OxyGraph.Series.Add(curve);
-            OxyGraph.Series.Add(extremes);
-            OxyGraph.Axes.Add(new LinearAxis{Position = AxisPosition.Bottom, Title = "Time [s]"});
+            OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time [s]" });
             OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Voxel Count [-]" });
+            OxyGraph.Subtitle = "Number of groups: " + extremeGroup.Last().ExtremeGroup.ToString();
+            foreach (var series in extremes)
+            {
+                if (series != null)
+                {
+                    OxyGraph.Series.Add(series);
+                    OxyGraph.Legends.Add(new Legend()
+                    {
+                        LegendTitleColor = series.Color,
+                    });
+                }
+            }
         }
 
         private double Test(double input)

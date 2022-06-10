@@ -17,16 +17,15 @@
     </abstraction:IocControl.Resources>
     <Grid>
         <Button Command="{Binding OnBtnCmd}"></Button>
-        <TabControl Width="500">
+        <TabControl>
+            <TabItem Header="Graph">
+                <local:GraphView ></local:GraphView>
+            </TabItem>
             <TabItem Header="Tab 1">
                 <local:TabTestView ></local:TabTestView>
             </TabItem>
             <TabItem Header="Tab 2">
 
-            </TabItem>
-
-            <TabItem Header="Graph">
-                <local:GraphView ></local:GraphView>
             </TabItem>
 
             <TabItem Header="{Binding HeaderName}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToHiddenConverter}}">
