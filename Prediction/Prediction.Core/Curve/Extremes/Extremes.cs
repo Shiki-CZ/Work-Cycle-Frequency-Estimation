@@ -29,18 +29,20 @@ namespace Prediction.Core.Curve.Extremes
 
         public GroupArray[] ExtremeGroups(IEnumerable<GroupArray> data)
         {
-            float peakThresh = 0.12f;
-
             var extremesAscend = data.OrderBy(data => data.Extreme).ToArray();
             extremesAscend[0].ExtremeGroup = 1;
             int groups = 1;
             int counter = 1;
+            float sumValue = extremesAscend[0].Extreme;
             float average = extremesAscend[0].Extreme;
+            float lastVal = 0;
 
             for (int i = 1; i <= extremesAscend.Length - 1; i++)
             {
-                if (extremesAscend[i].Extreme < average + average*peakThresh)
+                float peakThresh = average + average * 0.12f;
+                if (extremesAscend[i].Extreme < peakThresh)
                 {
+
                     extremesAscend[i].ExtremeGroup = groups;
 
                     for (int element = 1; element <= extremesAscend.Length - 1; element++)
@@ -48,8 +50,22 @@ namespace Prediction.Core.Curve.Extremes
                         if (extremesAscend[element].ExtremeGroup == groups)
                         {
                             counter++;
-                            average = (average + extremesAscend[element].Extreme) / counter;
+                            sumValue += extremesAscend[element].Extreme;
                         }
+                        else if (extremesAscend[element].ExtremeGroup == 0)
+                        {
+                            break;
+                        }
+                    }
+                    average = sumValue / counter;
+                    counter = 1;
+                    if (groups == 1)
+                    {
+                        sumValue = extremesAscend[0].Extreme;
+                    }
+                    else
+                    {
+                        sumValue = lastVal;
                     }
                 }
                 else
@@ -58,6 +74,8 @@ namespace Prediction.Core.Curve.Extremes
                     counter = 1;
                     extremesAscend[i].ExtremeGroup = groups;
                     average = extremesAscend[i].Extreme;
+                    lastVal = extremesAscend[i].Extreme;
+                    sumValue = extremesAscend[i].Extreme;
                 }
             }
 

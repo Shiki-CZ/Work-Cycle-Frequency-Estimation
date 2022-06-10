@@ -19,7 +19,7 @@ namespace Prediction.ViewModels
         {
             get
             {
-                _headerName += "  " + 5.ToString();
+                _headerName += "  ";
                 return _headerName;
             }
             set
@@ -30,6 +30,6 @@ namespace Prediction.ViewModels
         }
 
         private readonly IExtremes _computer;
-        private string _headerName = "My Tab Bajč";
+        private string _headerName = "My new Tab";
     }
 }
