@@ -145,9 +145,9 @@ namespace Prediction.ViewModels
 
             for (int colorNumber = 0; colorNumber < colorMax; colorNumber++)
             {
-                int r = 255 - (colorNumber * (int)colorStep);
-                int g = 255 * (int)(Math.Sin((colorNumber/2 * (int)colorStep*2)*(Math.PI/colorMax)));
-                int b = (colorNumber * (int)colorStep);
+                double r = 255 * (((-Math.Cos(colorNumber * (Math.PI / colorMax))) / 2) + 0.5);
+                double g = 255 * (Math.Sin(colorNumber * (Math.PI / colorMax)));
+                double b = 255 * (((Math.Cos(colorNumber * (Math.PI / colorMax))) / 2) + 0.5);
                 colors.Add( OxyColor.FromRgb((byte)r, (byte)g, (byte)b));
             }
 
@@ -197,7 +197,7 @@ namespace Prediction.ViewModels
 
             }
 
-            curve.Color = OxyColors.Yellow;
+            curve.Color = OxyColors.Black;
             curve.Title = "Smoothed points";
 
             OxyGraph.Series.Add(curve);
