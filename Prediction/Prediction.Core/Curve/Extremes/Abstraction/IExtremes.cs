@@ -13,6 +13,6 @@ namespace Prediction.Core.Curve.Extremes.Abstraction
 
         public GroupArray[] ExtremeGroups(IEnumerable<GroupArray> data);
 
-        public int[] MergeExtremeGroups(int[] data);
+        public GroupArray[] MergeExtreme(IEnumerable<GroupArray> data);
     }
 }

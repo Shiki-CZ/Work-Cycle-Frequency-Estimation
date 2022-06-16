@@ -14,6 +14,7 @@ namespace Prediction.Core.Filtrations
         {
             throw new NotImplementedException();
 
+
         }
     }
 }

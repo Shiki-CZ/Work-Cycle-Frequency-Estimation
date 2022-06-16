@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using Prediction.Core.Curve.Extremes.Abstraction;
@@ -82,17 +83,67 @@ namespace Prediction.Core.Curve.Extremes
             return extremesAscend;
         }
 
-        public int[] MergeExtremeGroups(int[] data)
+        public GroupArray[] MergeExtreme(IEnumerable<GroupArray> data)
         {
-            throw new NotImplementedException();
+            var extremeGroupAscend = data.OrderBy(data => data.ExtremeGroup).ToArray();
+            int pos1 = 0;
+            int pos2 = 0;
+            int posDiff = 0;
+            int pos_thresh = 10;
+
+            for (int groupNumber = 1; groupNumber <= extremeGroupAscend.Max(extremeGroupAscend => extremeGroupAscend.ExtremeGroup); groupNumber++)
+            {
+                for (int first = 0; first < extremeGroupAscend.Length; first++)
+                {
+                    if (extremeGroupAscend[first].ExtremeGroup == groupNumber)
+                    {
+                        pos1 = extremeGroupAscend[first].Time;
+                        for (int second = 1; second <= extremeGroupAscend.Length; second++)
+                        {
+                            if (extremeGroupAscend[second].ExtremeGroup == groupNumber)
+                            {
+                                pos2 = extremeGroupAscend[second].Time;
+                                posDiff = Math.Abs(pos2 - pos1);
+                                if (posDiff < pos_thresh)
+                                {
+                                    if (extremeGroupAscend[first].Extreme > extremeGroupAscend[second].Extreme)
+                                    {
+                                        extremeGroupAscend[first].MergeExtreme = false;
+                                        extremeGroupAscend[second].MergeExtreme = true;
+                                    }
+                                    else
+                                    {
+                                        extremeGroupAscend[first].MergeExtreme = true;
+                                        extremeGroupAscend[second].MergeExtreme = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            return extremeGroupAscend;
         }
     }
 
     public class GroupArray
     {
-        public float Time { get; set; }
+        public int Time { get; set; }
         public float Extreme { get; set; }
         public int ExtremeGroup { get; set; }
+        public bool MergeExtreme { get; set; }
+        public float Frequency { get; set; }
+        public float Period { get; set; }
+
     }
 
 }

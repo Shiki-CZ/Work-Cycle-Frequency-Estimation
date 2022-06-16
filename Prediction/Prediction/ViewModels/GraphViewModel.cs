@@ -135,10 +135,11 @@ namespace Prediction.ViewModels
 
             var extremeData = extreme.LocalMaximas(curveData);
             var extremeGroup = extreme.ExtremeGroups(extremeData);
+            var mergedExtremes = extreme.MergeExtreme(extremeGroup);
 
             List<LineSeries> extremes = new List<LineSeries>();
 
-            int colorMax = extremeGroup.Last().ExtremeGroup;
+            int colorMax = mergedExtremes.Last().ExtremeGroup;
             float colorStep = 255 / colorMax;
 
             List<OxyColor> colors = new List<OxyColor>();
@@ -151,8 +152,9 @@ namespace Prediction.ViewModels
                 colors.Add( OxyColor.FromRgb((byte)r, (byte)g, (byte)b));
             }
 
-            for (int group = 0; group < extremeGroup.Last().ExtremeGroup; group++)
+            for (int group = 0; group < mergedExtremes.Last().ExtremeGroup; group++)
             {
+
                 if (colors.Count == group)
                 {
                     break;
@@ -166,9 +168,9 @@ namespace Prediction.ViewModels
                 float min = 1000;
                 float max = -1;
                 float time = 0;
-                foreach (var item in extremeGroup)
+                foreach (var item in mergedExtremes)
                 {
-                    if (group + 1 == item.ExtremeGroup)
+                    if (group + 1 == item.ExtremeGroup && item.MergeExtreme == false)
                     {
                         extremeSeries.Points.Add(new DataPoint(item.Time, item.Extreme));
                         if (item.Extreme < min)
@@ -203,7 +205,7 @@ namespace Prediction.ViewModels
             OxyGraph.Series.Add(curve);
             OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time [s]" });
             OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Voxel Count [-]" });
-            OxyGraph.Subtitle = "Number of groups: " + extremeGroup.Last().ExtremeGroup.ToString();
+            OxyGraph.Subtitle = "Number of groups: " + mergedExtremes.Last().ExtremeGroup.ToString();
             foreach (var series in extremes)
             {
                 if (series != null)
