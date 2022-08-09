@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CenterSpace.NMath.Standard.Windows.X64" Version="7.4.0.12" />
+    <PackageReference Include="CenterSpace.NMath.Standard.Windows.X64" Version="7.4.0.14" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CenterSpace.NMath.Core;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
@@ -10,12 +11,16 @@ using OxyPlot.Series;
 using Prediction.Core.Curve;
 using Prediction.ViewModels.Abstraction;
 using Prediction.Core.Curve.Abstraction;
+using Prediction.Core.Curve.Extremes;
 using Prediction.Core.Curve.Extremes.Abstraction;
+using Prediction.Core.Grouping.Abstraction;
+using Prediction.Tools;
 
 namespace Prediction.ViewModels
 {
     internal class GraphViewModel : ViewModelBase
     {
+        private readonly IConsole _console;
         private PlotModel _oxyGraph;
 
         public PlotModel OxyGraph
@@ -119,8 +124,9 @@ namespace Prediction.ViewModels
                 44, 40, 36, 28, 24, 22, 22, 20, 16, 16, 10, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8
             };
 
-        public GraphViewModel(IDataSmoother smoother, IExtremes extreme)
+        public GraphViewModel(IDataSmoother smoother, IExtremes extreme, IConsole console, IToFrequency frequency)
         {
+            _console = console;
             this.OxyGraph = new PlotModel { Title = "Local Extremes" };
             LineSeries curve = new LineSeries();
             //LineSeries extremes = new LineSeries();
@@ -136,7 +142,48 @@ namespace Prediction.ViewModels
             var extremeData = extreme.LocalMaximas(curveData);
             var extremeGroup = extreme.ExtremeGroups(extremeData);
             var mergedExtremes = extreme.MergeExtreme(extremeGroup);
+            var freq = frequency.GetFrequencies(mergedExtremes, 0.1f);
+            //Console.WriteLine("mergedExtremes");
 
+            ////////////////////////////////////////////  CONSOLE  ///////////////////////////////////////  CONSOLE  ///////////////////////////////  CONSOLE  //////////////
+            //var msg1 = mergedExtremes.Select(value => value.MergeExtreme.ToString()).ToList();
+            //var msg2 = mergedExtremes.Select(value => value.Extreme.ToString()).ToList();
+            //var msg3 = mergedExtremes.Select(value => value.ExtremeGroup.ToString()).ToList();
+            //var msg4 = mergedExtremes.Select(value => value.Time.ToString()).ToList();
+            //int cnt = 0;
+            //foreach (var line in msg1)
+            //{
+            //    _console.AddLine("Merged extremes: " + line + "     " + "Extreme: " + msg2[cnt] + "    " +
+            //                     "Group: " + msg3[cnt] + "     " + "Time: " + msg4[cnt]);
+            //        cnt++;
+            //}
+            //_console.AddLine(cnt.ToString());
+
+            //var freq1 = freq.Select(value => value.Time1.ToString()).ToList();
+            //var freq2 = freq.Select(value => value.Time2.ToString()).ToList();
+            //var freq3 = freq.Select(value => value.Frequency.ToString()).ToList();
+            //var freq4 = freq.Select(value => value.FrequencyGroup.ToString()).ToList();
+            //int cnt2 = 0;
+
+            //foreach (var line in freq1)
+            //{
+            //    _console.AddLine("Time1: " + line + "     " + "Time2: " + freq2[cnt2] + "    " +
+            //                     "Frequency: " + freq3[cnt2] + "     " + "Group: " + freq4[cnt2]);
+            //    cnt2++;
+            //}
+            //_console.AddLine(cnt2.ToString());
+
+            //var freq5 = freq.OrderBy(frequency => frequency.Frequency).ToArray();
+            //var freq51 = freq5.Select(value => value.Frequency).ToList();
+            
+            //foreach (var lines in freq51)
+            //{
+            //    float num = 1 / lines;
+            //    num.ToString();
+            //    _console.AddLine("frequency: " + num);
+            //}
+            ////////////////////////////////////////////  CONSOLE  ///////////////////////////////////////  CONSOLE  ///////////////////////////////  CONSOLE  //////////////
+            
             List<LineSeries> extremes = new List<LineSeries>();
 
             int colorMax = mergedExtremes.Last().ExtremeGroup;
@@ -203,7 +250,7 @@ namespace Prediction.ViewModels
             curve.Title = "Smoothed points";
 
             OxyGraph.Series.Add(curve);
-            OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time [s]" });
+            OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time [s] x10^2" });
             OxyGraph.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Voxel Count [-]" });
             OxyGraph.Subtitle = "Number of groups: " + mergedExtremes.Last().ExtremeGroup.ToString();
             foreach (var series in extremes)

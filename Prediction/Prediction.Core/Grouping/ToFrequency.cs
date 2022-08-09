@@ -10,53 +10,49 @@ namespace Prediction.Core.Grouping
 {
     public class ToFrequency : IToFrequency
     {
-        public GroupArray[] GetFrequencies(IEnumerable<GroupArray> data, float timestep)
+        public FrequencyArray[] GetFrequencies(IEnumerable<GroupArray> data, float timestep)
         {
             var timeAscend = data.OrderBy(data => data.Time).ToArray();
+            var frequency = new List<FrequencyArray> { };
             int time1 = 0;
             int time2 = 0;
+            float freq = 0;
+            int groupNumber = 0;
 
-            for (int groupNumber = 1; groupNumber <= timeAscend.Max(extremeGroupAscend => extremeGroupAscend.ExtremeGroup); groupNumber++)
+            for (int first = 0; first < timeAscend.Length - 1; first++)
             {
-                for (int first = 0; first < timeAscend.Length; first++)
+                if (timeAscend[first].MergeExtreme == true)
                 {
-                    if (timeAscend[first].ExtremeGroup == groupNumber)
+                    continue;
+                }
+                time1 = timeAscend[first].Time;
+                groupNumber = timeAscend[first].ExtremeGroup;
+                for (int second = first + 1; second < timeAscend.Length; second++)
+                {
+                    if (timeAscend[second].MergeExtreme == true)
                     {
-                        time1 = timeAscend[first].Time;
-                        for (int second = 1; second <= timeAscend.Length; second++)
-                        {
-                            if (timeAscend[second].ExtremeGroup == groupNumber)
-                            {
-                                time2 = timeAscend[second].Time;
-                                posDiff = Math.Abs(time2 - time1);
-                                if (posDiff < pos_thresh)
-                                {
-                                    if (timeAscend[first].Extreme > timeAscend[second].Extreme)
-                                    {
-                                        timeAscend[first].MergeExtreme = false;
-                                        timeAscend[second].MergeExtreme = true;
-                                    }
-                                    else
-                                    {
-                                        timeAscend[first].MergeExtreme = true;
-                                        timeAscend[second].MergeExtreme = false;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
+                        continue;
                     }
-                    else
+                    if (timeAscend[second].ExtremeGroup == groupNumber)
                     {
-                        break;
+                        time2 = timeAscend[second].Time;
+                        freq = 1 / (Math.Abs(time2 - time1) * timestep);
+                        frequency.Add(new FrequencyArray { Time1 = time1, Time2 = time2, Frequency = freq, FrequencyGroup = groupNumber });
                     }
                 }
             }
 
-            throw new NotImplementedException();
+
+            return frequency.ToArray();
         }
+    }
+    public class FrequencyArray
+    {
+        public int Time1 { get; set; }
+        public int Time2 { get; set; }
+        public int FrequencyGroup { get; set; }
+        public float Frequency { get; set; }
+        public float Period { get; set; }
+
     }
 }

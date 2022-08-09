@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prediction.Core;
+using Prediction.Tools;
 
 namespace Prediction.IocContainer
 {
@@ -16,6 +17,7 @@ namespace Prediction.IocContainer
             //Register your configuration extensions here
             services.ConfigureViewModels();
             services.ConfigurePredictionCore();
+            services.ConfigureTools();
             return services;
         }
 
@@ -24,6 +26,13 @@ namespace Prediction.IocContainer
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<TabTestViewModel>();
             services.AddSingleton<GraphViewModel>();
+            services.AddSingleton<ConsoleViewModel>();
+            return services;
+        }
+
+        public static IServiceCollection ConfigureTools(this IServiceCollection services)
+        {
+            services.AddSingleton<IConsole, DebugConsole>();
             return services;
         }
     }

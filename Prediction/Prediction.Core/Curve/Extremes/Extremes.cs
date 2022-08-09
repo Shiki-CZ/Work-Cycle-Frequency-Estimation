@@ -98,7 +98,7 @@ namespace Prediction.Core.Curve.Extremes
                     if (extremeGroupAscend[first].ExtremeGroup == groupNumber)
                     {
                         pos1 = extremeGroupAscend[first].Time;
-                        for (int second = 1; second <= extremeGroupAscend.Length; second++)
+                        for (int second = 1; second < extremeGroupAscend.Length; second++)
                         {
                             if (extremeGroupAscend[second].ExtremeGroup == groupNumber)
                             {
@@ -141,8 +141,6 @@ namespace Prediction.Core.Curve.Extremes
         public float Extreme { get; set; }
         public int ExtremeGroup { get; set; }
         public bool MergeExtreme { get; set; }
-        public float Frequency { get; set; }
-        public float Period { get; set; }
 
     }
 

@@ -7,8 +7,8 @@ using Prediction.Core.Curve.Extremes;
 
 namespace Prediction.Core.Grouping.Abstraction
 {
-    internal interface IToFrequency
+    public interface IToFrequency
     {
-        public GroupArray[] GetFrequencies(IEnumerable<GroupArray> data, float timestep);
+        public FrequencyArray[] GetFrequencies(IEnumerable<GroupArray> data, float timestep);
     }
 }

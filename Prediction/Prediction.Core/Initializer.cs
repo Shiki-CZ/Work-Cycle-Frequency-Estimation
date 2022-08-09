@@ -5,6 +5,8 @@ using Prediction.Core.Curve.Extremes;
 using Prediction.Core.Curve.Extremes.Abstraction;
 using Prediction.Core.Filtrations;
 using Prediction.Core.Filtrations.Abstraction;
+using Prediction.Core.Grouping;
+using Prediction.Core.Grouping.Abstraction;
 
 namespace Prediction.Core
 {
@@ -13,6 +15,7 @@ namespace Prediction.Core
         public static IServiceCollection ConfigurePredictionCore(this IServiceCollection services)
         {
             services.ConfigureCurve();
+            services.ConfigureFilters();
             return services;
         }
 
@@ -25,7 +28,7 @@ namespace Prediction.Core
         private static IServiceCollection ConfigureFilters(this IServiceCollection services)
         {
             services.AddSingleton<IMerger, ExtremeMerger>();
-            services.AddSingleton<IExtremes, Extremes>();
+            services.AddSingleton<IToFrequency, ToFrequency>();
 
             return services;
         }

@@ -16,12 +16,16 @@
             TrueValue="Visible" FalseValue="Hidden" />
     </abstraction:IocControl.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="150"></RowDefinition>
+        </Grid.RowDefinitions>
         <Button Command="{Binding OnBtnCmd}"></Button>
         <TabControl>
-            <TabItem Header="Graph">
+            <TabItem Header="Graph Extremes">
                 <local:GraphView ></local:GraphView>
             </TabItem>
-            <TabItem Header="Tab 1">
+            <TabItem Header="Graph Frequencies">
                 <local:TabTestView ></local:TabTestView>
             </TabItem>
             <TabItem Header="Tab 2">
@@ -31,15 +35,17 @@
             <TabItem Header="{Binding HeaderName}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToHiddenConverter}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="100"/>
-                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <local:TabTestView Grid.Column="2"></local:TabTestView>
+                   
                 </Grid>
 
             </TabItem>
         </TabControl>
-
+        <Grid Row="1">
+            <local:ConsoleView ></local:ConsoleView>
+        </Grid>
     </Grid>
 </abstraction:IocControl>
