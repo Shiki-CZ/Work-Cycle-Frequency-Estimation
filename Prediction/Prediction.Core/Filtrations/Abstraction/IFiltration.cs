@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Prediction.Core.Grouping;
 
 namespace Prediction.Core.Filtrations.Abstraction
 {
     internal interface IFiltration
     {
-        public float[] Filter(float[] data);
+        public float[] SignificanceFilter(IEnumerable<FrequencyArray> data);
     }
 }

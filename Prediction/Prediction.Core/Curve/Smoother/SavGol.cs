@@ -12,9 +12,9 @@ public class SavGol : IDataSmoother
 {
     public float[] Smooth(int[] data)
     {
-        int numberLeft = 20;
-        int numberRight = 20;
-        int degree = 4;
+        int numberLeft = 91;
+        int numberRight = 91;
+        int degree = 2;
         SavitzkyGolayFilter sgf = new SavitzkyGolayFilter(numberLeft, numberRight, degree);
         DoubleVector input = new DoubleVector();
         foreach (var item in data)

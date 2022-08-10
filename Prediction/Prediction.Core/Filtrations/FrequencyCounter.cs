@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prediction.Core.Filtrations.Abstraction;
+using Prediction.Core.Grouping;
 
 namespace Prediction.Core.Filtrations
 {
-    internal class FrequencyCounter : IFiltration
+    public class FrequencyCounter : IFiltration
     {
-        public float[] Filter(float[] data)
+        public float[] SignificanceFilter(IEnumerable<FrequencyArray> data)
         {
             throw new NotImplementedException();
         }

@@ -89,7 +89,7 @@ namespace Prediction.Core.Curve.Extremes
             int pos1 = 0;
             int pos2 = 0;
             int posDiff = 0;
-            int pos_thresh = 10;
+            int pos_thresh = 100;
 
             for (int groupNumber = 1; groupNumber <= extremeGroupAscend.Max(extremeGroupAscend => extremeGroupAscend.ExtremeGroup); groupNumber++)
             {

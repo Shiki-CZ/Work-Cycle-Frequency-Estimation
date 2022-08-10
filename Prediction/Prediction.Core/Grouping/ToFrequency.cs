@@ -17,6 +17,7 @@ namespace Prediction.Core.Grouping
             int time1 = 0;
             int time2 = 0;
             float freq = 0;
+            float period = 0;
             int groupNumber = 0;
 
             for (int first = 0; first < timeAscend.Length - 1; first++)
@@ -36,8 +37,9 @@ namespace Prediction.Core.Grouping
                     if (timeAscend[second].ExtremeGroup == groupNumber)
                     {
                         time2 = timeAscend[second].Time;
-                        freq = 1 / (Math.Abs(time2 - time1) * timestep);
-                        frequency.Add(new FrequencyArray { Time1 = time1, Time2 = time2, Frequency = freq, FrequencyGroup = groupNumber });
+                        period = Math.Abs(time2 - time1) * timestep;
+                        freq = 1 / period;
+                        frequency.Add(new FrequencyArray { Time1 = time1, Time2 = time2, Frequency = freq, FrequencyGroup = groupNumber, Period = period});
                     }
                 }
             }
