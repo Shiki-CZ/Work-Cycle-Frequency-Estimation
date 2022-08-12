@@ -9,6 +9,6 @@ namespace Prediction.Core.Filtrations.Abstraction
 {
     internal interface IMerger
     {
-        public GroupArray[] Merge(IEnumerable<GroupArray> data);
+        public Extreme[] Merge(IEnumerable<Extreme> data);
     }
 }

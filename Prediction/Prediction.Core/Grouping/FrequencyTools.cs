@@ -8,9 +8,9 @@ using Prediction.Core.Grouping.Abstraction;
 
 namespace Prediction.Core.Grouping
 {
-    public class ToFrequency : IToFrequency
+    public static class FrequencyTools
     {
-        public FrequencyArray[] GetFrequencies(IEnumerable<GroupArray> data, float timestep)
+        public static FrequencyArray[] ToFrequencies(this IEnumerable<Extreme> data, float timestep)
         {
             var timeAscend = data.OrderBy(data => data.Time).ToArray();
             var frequency = new List<FrequencyArray> { };
@@ -47,14 +47,5 @@ namespace Prediction.Core.Grouping
 
             return frequency.ToArray();
         }
-    }
-    public class FrequencyArray
-    {
-        public int Time1 { get; set; }
-        public int Time2 { get; set; }
-        public int FrequencyGroup { get; set; }
-        public float Frequency { get; set; }
-        public float Period { get; set; }
-
     }
 }

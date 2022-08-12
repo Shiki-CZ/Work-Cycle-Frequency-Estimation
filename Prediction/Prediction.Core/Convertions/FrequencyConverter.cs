@@ -10,13 +10,13 @@ namespace Prediction.Core.Convertions
 {
     internal class FrequencyConverter : IFrequencyConverter
     {
-        public GroupArray[] ToPeriod(IEnumerable<GroupArray> data)
+        public Extreme[] ToPeriod(IEnumerable<Extreme> data)
         {
             
             throw new NotImplementedException();
         }
 
-        public GroupArray[] ToExtremes(IEnumerable<GroupArray> data)
+        public Extreme[] ToExtremes(IEnumerable<Extreme> data)
         {
             throw new NotImplementedException();
         }

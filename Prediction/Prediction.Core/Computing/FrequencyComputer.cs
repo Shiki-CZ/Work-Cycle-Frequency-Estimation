@@ -3,128 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Legends;
-using OxyPlot.Series;
 using Prediction.Core.Curve.Abstraction;
 using Prediction.Core.Curve.Extremes.Abstraction;
-using Prediction.Core.Grouping;
 using Prediction.Core.Grouping.Abstraction;
-using Prediction.Tools;
-using Prediction.ViewModels.Abstraction;
-
-namespace Prediction.ViewModels
+using Prediction.Core.Grouping;
+namespace Prediction.Core.Computing
 {
-    internal class TabTestViewModel : ViewModelBase
+    internal class FrequencyComputer : IFrequencyComputer 
     {
+        private readonly IDataSmoother _smoother;
+        private readonly IExtremesFinder _extremeFinder;
 
-        private readonly IConsole _console;
-        private PlotModel _oxyGraph_2;
 
-        public PlotModel OxyGraph_2
+        public FrequencyComputer(IDataSmoother smoother, IExtremesFinder extremeFinder)
         {
-            get => _oxyGraph_2;
-            private set
-            {
-                _oxyGraph_2 = value;
-                OnPropertyChanged();
-            }
+            _smoother = smoother;
+            _extremeFinder = extremeFinder;
         }
 
-        private int[] Data = new int[]
-            {
-                24, 24, 26, 22, 20, 22, 24, 30, 25, 24, 30, 30, 30, 34, 36, 38, 44, 46, 45, 46, 48, 50, 52, 52, 56, 56,
-                56,
-                56, 52, 52, 52, 48, 46, 48, 44, 40, 36, 28, 24, 22, 22, 20, 16, 16, 10, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-                6,
-                6, 8, 8, 12, 14, 12, 14, 14, 18, 28, 28, 40, 48, 50, 60, 56, 60, 62, 60, 58, 66, 72, 74, 66, 62, 64, 66,
-                70, 70, 72, 72, 70, 66, 64, 64, 62, 66, 68, 74, 74, 66, 64, 60, 66, 62, 64, 64, 60, 54, 60, 58, 54, 58,
-                52,
-                48, 48, 50, 44, 44, 50, 52, 52, 52, 56, 56, 62, 62, 66, 68, 70, 70, 70, 72, 76, 78, 78, 78, 78, 78, 78,
-                78,
-                78, 74, 74, 74, 72, 68, 65, 64, 62, 62, 62, 62, 58, 54, 48, 52, 50, 48, 46, 40, 38, 34, 40, 34, 32, 30,
-                30,
-                28, 26, 30, 30, 26, 24, 22, 20, 20, 20, 18, 18, 18, 18, 18, 18, 18, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-                16,
-                16, 16, 16, 14, 14, 14, 14, 16, 14, 14, 12, 13, 19, 52, 74, 94, 118, 142, 156, 188, 209, 225, 239, 221,
-                245, 231, 242, 235, 231, 258, 259, 242, 244, 216, 178, 151, 119, 92, 60, 56, 54, 54, 52, 56, 56, 56, 56,
-                52, 52, 50, 48, 44, 44, 44, 44, 40, 36, 32, 30, 30, 28, 26, 26, 30, 26, 24, 20, 26, 24, 24, 24, 22, 26,
-                28,
-                28, 28, 28, 30, 30, 32, 34, 34, 36, 36, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 32, 34, 32, 30, 30,
-                30,
-                28, 28, 28, 24, 22, 24, 24, 26, 22, 20, 22, 24, 30, 25, 24, 30, 30, 30, 34, 36, 38, 44, 46, 45, 46, 48,
-                50,
-                52, 52, 56, 56, 56, 56, 52, 52, 52, 48, 46, 48, 44, 40, 36, 28, 24, 22, 22, 20, 16, 16, 10, 8, 6, 6, 6,
-                6,
-                6, 6, 6, 6, 6, 6, 6, 8, 8, 12, 14, 12, 14, 14, 18, 28, 28, 40, 48, 50, 60, 56, 60, 62, 60, 58, 66, 72,
-                74,
-                66, 62, 64, 66, 70, 70, 72, 72, 70, 66, 64, 64, 62, 66, 68, 74, 74, 66, 64, 60, 66, 62, 64, 64, 60, 54,
-                60,
-                58, 54, 58, 52, 48, 48, 50, 44, 44, 50, 52, 52, 52, 56, 56, 62, 62, 66, 68, 70, 70, 70, 72, 76, 78, 78,
-                78,
-                78, 78, 78, 78, 78, 74, 74, 74, 72, 68, 65, 64, 62, 62, 62, 62, 58, 54, 48, 52, 50, 48, 46, 40, 38, 34,
-                40,
-                34, 32, 30, 30, 28, 26, 30, 30, 26, 24, 22, 20, 20, 20, 18, 18, 18, 18, 18, 18, 18, 16, 16, 16, 16, 16,
-                16,
-                16, 16, 16, 16, 16, 16, 16, 14, 14, 14, 14, 16, 14, 14, 12, 12, 14, 16, 14, 14, 22, 27, 48, 76, 96, 127,
-                139, 171, 217, 226, 236, 239, 231, 257, 241, 259, 256, 252, 254, 239, 238, 218, 192, 180, 155, 120, 112,
-                97, 64, 62, 56, 52, 52, 50, 48, 44, 44, 44, 44, 40, 36, 32, 30, 30, 28, 26, 26, 30, 26, 24, 20, 26, 24,
-                24,
-                24, 22, 26, 28, 28, 28, 28, 30, 30, 32, 34, 34, 36, 36, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 32, 34,
-                32,
-                30, 30, 30, 28, 28, 28, 24, 22, 24, 24, 26, 22, 20, 22, 24, 30, 25, 24, 30, 30, 30, 34, 36, 38, 44, 46,
-                45,
-                46, 48, 50, 52, 52, 56, 56, 56, 56, 56, 52, 52, 52, 48, 46, 48, 44, 40, 36, 28, 24, 22, 22, 20, 16, 16,
-                10,
-                8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 8, 12, 14, 12, 14, 14, 18, 28, 28, 40, 48, 50, 60, 56, 60, 62,
-                60,
-                58, 66, 72, 74, 66, 62, 64, 66, 70, 70, 72, 72, 70, 66, 64, 64, 62, 66, 68, 74, 74, 66, 64, 60, 66, 62,
-                64,
-                64, 60, 54, 60, 58, 54, 58, 52, 48, 48, 50, 44, 44, 50, 52, 52, 52, 56, 56, 62, 62, 66, 68, 70, 70, 70,
-                72,
-                76, 78, 78, 78, 78, 78, 78, 78, 78, 74, 74, 74, 72, 68, 65, 64, 62, 62, 62, 62, 58, 54, 48, 52, 50, 48,
-                46,
-                40, 38, 34, 40, 34, 32, 30, 30, 28, 26, 30, 30, 26, 24, 22, 20, 20, 20, 18, 18, 18, 18, 18, 18, 18, 16,
-                16,
-                16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 14, 14, 14, 14, 16, 14, 14, 12, 12, 14, 16, 14, 14, 16,
-                16,
-                26, 39, 63, 98, 122, 157, 195, 225, 242, 222, 244, 255, 241, 255, 236, 236, 248, 238, 260, 259, 250,
-                246,
-                235, 194, 180, 172, 141, 113, 71, 60, 58, 54, 48, 44, 44, 44, 44, 40, 36, 32, 30, 30, 28, 26, 26, 30,
-                26,
-                24, 20, 26, 24, 24, 24, 22, 26, 28, 28, 28, 28, 30, 30, 32, 34, 34, 36, 36, 34, 34, 34, 34, 34, 34, 34,
-                34,
-                34, 34, 32, 34, 32, 30, 30, 30, 28, 28, 28, 24, 22, 24, 24, 26, 22, 20, 22, 24, 30, 25, 24, 30, 30, 30,
-                34,
-                36, 38, 44, 46, 45, 46, 48, 50, 52, 52, 56, 56, 56, 56, 52, 52, 52, 48, 46, 48, 44, 40, 36, 28, 24, 22,
-                22,
-                20, 16, 16, 10, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 8, 12, 14, 12, 14, 14, 18, 28, 28, 40, 48, 50,
-                60, 56, 60, 62, 60, 58, 66, 72, 74, 66, 62, 64, 66, 70, 70, 72, 72, 72, 70, 66, 64, 64, 62, 66, 68, 74,
-                74,
-                66, 64, 60, 66, 62, 64, 64, 60, 54, 60, 58, 54, 58, 52, 48, 48, 50, 44, 44, 50, 52, 52, 52, 56, 56, 62,
-                62,
-                66, 68, 70, 70, 70, 72, 76, 78, 78, 78, 78, 78, 78, 78, 78, 74, 74, 74, 72, 68, 65, 64, 62, 62, 62, 62,
-                58,
-                54, 48, 52, 50, 48, 46, 40, 38, 34, 40, 34, 32, 30, 30, 28, 26, 30, 30, 26, 24, 22, 20, 20, 20, 18, 18,
-                18,
-                18, 18, 18, 18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 14, 14, 14, 14, 16, 14, 14, 12,
-                12,
-                14, 16, 14, 14, 16, 22, 29, 51, 79, 125, 134, 169, 200, 220, 225, 228, 233, 243, 233, 251, 241, 235,
-                256,
-                256, 251, 271, 262, 253, 253, 239, 205, 184, 141, 95, 71, 64, 58, 54, 48, 44, 44, 44, 44, 40, 36, 32,
-                30,
-                30, 28, 26, 26, 30, 26, 24, 20, 26, 24, 24, 24, 22, 26, 28, 28, 28, 28, 30, 30, 32, 34, 34, 36, 36, 34,
-                34,
-                34, 34, 34, 34, 34, 34, 34, 34, 34, 32, 34, 32, 30, 30, 30, 28, 28, 28, 24, 22, 24, 24, 26, 22, 20, 22,
-                24,
-                30, 25, 24, 30, 30, 30, 34, 36, 38, 44, 46, 45, 46, 48, 50, 52, 52, 56, 56, 56, 56, 52, 52, 52, 48, 46,
-                48,
-                44, 40, 36, 28, 24, 22, 22, 20, 16, 16, 10, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8
-            };
-
         private int[] Data2 = new[]
-        {
+       {
             24, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 28, 28, 28, 30, 30, 30, 30, 30, 29, 28, 28, 28, 28, 26, 26,
             26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 30, 30, 30,
             30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 32, 32, 32, 32, 34, 34, 34, 34, 34, 35, 37, 38, 38, 38, 38, 38,
@@ -596,105 +494,28 @@ namespace Prediction.ViewModels
             24, 24, 24, 24, 24
         };
 
-        public TabTestViewModel(IDataSmoother smoother, IExtremesFinder extremeFinder, IConsole console)
+
+        public void Compute()
         {
-            _console = console;
-            this.OxyGraph_2 = new PlotModel { Title = "Frequencies" };
-            LineSeries curve = new LineSeries();
-            //LineSeries extremes = new LineSeries();
-            //series.MarkerType = MarkerType.Circle;
-            //series.LineStyle = LineStyle.None;
+            var curveData = _smoother.Smooth(Data2);
 
-            var curveData = smoother.Smooth(Data2);
-            for (int i = 0; i < Data2.Length; i++)
-            {
-                curve.Points.Add(new DataPoint(i, curveData[i]));
-            }
-            
-            var extremeData = extremeFinder.LocalMaximas(curveData);
-            var extremeGroup = extremeFinder.ExtremeGroups(extremeData);
-            var mergedExtremes = extremeFinder.MergeExtreme(extremeGroup);
-            var freq = mergedExtremes.ToFrequencies(0.01f);
-
-            ////////////////////////////////////////////  CONSOLE  ///////////////////////////////////////  CONSOLE  ///////////////////////////////  CONSOLE  //////////////
-            _console.AddLine("frequency: ");
-            ////////////////////////////////////////////  CONSOLE  ///////////////////////////////////////  CONSOLE  ///////////////////////////////  CONSOLE  ///////////////
-            
-            List<LineSeries> extremes = new List<LineSeries>();
-
-            int colorMax = mergedExtremes.Last().ExtremeGroup;
-            float colorStep = 255 / colorMax;
-
-            List<OxyColor> colors = new List<OxyColor>();
-
-            for (int colorNumber = 0; colorNumber < colorMax; colorNumber++)
-            {
-                double r = 255 * (((-Math.Cos(colorNumber * (Math.PI / colorMax))) / 2) + 0.5);
-                double g = 255 * (Math.Sin(colorNumber * (Math.PI / colorMax)));
-                double b = 255 * (((Math.Cos(colorNumber * (Math.PI / colorMax))) / 2) + 0.5);
-                colors.Add(OxyColor.FromRgb((byte)r, (byte)g, (byte)b));
-            }
-
-            for (int group = 0; group < mergedExtremes.Last().ExtremeGroup; group++)
-            {
-
-                if (colors.Count == group)
-                {
-                    break;
-                }
-
-                var extremeSeries = new LineSeries();
-                extremeSeries.MarkerType = MarkerType.Circle;
-                extremeSeries.LineStyle = LineStyle.None;
-                extremeSeries.Color = colors[group];
-                extremeSeries.Title = "Frequency Group " + group.ToString();
-                float min = 1000;
-                float max = -1;
-                float time = 0;
-                foreach (var item in freq)
-                {
-                    if (group + 1 == item.FrequencyGroup)
-                    {
-                        extremeSeries.Points.Add(new DataPoint(item.Period, item.FrequencyGroup));
-                    }
-                }
-
-                extremes.Add(extremeSeries);
-                //var maxLineDelimiter = new LineSeries();
-                //maxLineDelimiter.Color = colors[group];
-                //maxLineDelimiter.Points.Add(new DataPoint(0, max));
-                //maxLineDelimiter.Points.Add(new DataPoint(time, max));
-                //maxLineDelimiter.StrokeThickness = 1;
-                //extremes.Add(maxLineDelimiter);
-
-                //var minLineDelimiter = new LineSeries();
-                //minLineDelimiter.Color = colors[group];
-                //minLineDelimiter.Points.Add(new DataPoint(0, min));
-                //minLineDelimiter.Points.Add(new DataPoint(time, min));
-                //minLineDelimiter.StrokeThickness = 1;
-                //extremes.Add(minLineDelimiter);
-
-            }
-
-            OxyGraph_2.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Frequencies" });
-            OxyGraph_2.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Frequency group" });
-            OxyGraph_2.Subtitle = "Number of groups: " + mergedExtremes.Last().ExtremeGroup.ToString();
-            foreach (var series in extremes)
-            {
-                if (series != null)
-                {
-                    OxyGraph_2.Series.Add(series);
-                    OxyGraph_2.Legends.Add(new Legend()
-                    {
-                        LegendTitleColor = series.Color,
-                    });
-                }
-            }
+            var extremeData = _extremeFinder.LocalMaximas(curveData);
+            var extremeGroup = _extremeFinder.ExtremeGroups(extremeData);
+            var mergedExtremes = _extremeFinder.MergeExtreme(extremeGroup);
+          Data = mergedExtremes.ToFrequencies(0.01f);
+             
         }
 
-        private double Test(double input)
-        {
-            return 0;
-        }
+        public FrequencyArray[] Data { get; private set; }
+    }
+
+    internal interface IFrequencyComputer : IComputer
+    {
+        FrequencyArray[] Data { get; }
+    }
+
+    internal interface IComputer
+    {
+        void Compute();
     }
 }

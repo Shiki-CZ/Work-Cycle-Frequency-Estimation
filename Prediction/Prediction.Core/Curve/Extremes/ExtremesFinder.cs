@@ -9,18 +9,18 @@ using Prediction.Core.Curve.Extremes.Abstraction;
 
 namespace Prediction.Core.Curve.Extremes
 {
-    public class Extremes : IExtremes
+    public class ExtremesFinder : IExtremesFinder
     {
-        public GroupArray[] LocalMaximas(float[] data)
+        public Extreme[] LocalMaximas(float[] data)
         {
-            var Extremes = new List<GroupArray> { };
+            var Extremes = new List<Extreme> { };
             if (data[0] > data[1])
-                Extremes.Add(new GroupArray { Time = 0, Extreme = data[0] });
+                Extremes.Add(new Extreme { Time = 0, Value = data[0] });
 
             for (int i = 1; i < data.Length - 1; i++)
             {
                 if ((data[i - 1] < data[i]) && (data[i] > data[i + 1]))
-                    Extremes.Add(new GroupArray { Time = i, Extreme = data[i] });
+                    Extremes.Add(new Extreme { Time = i, Value = data[i] });
             }
 
             int pos = 0;
@@ -28,20 +28,20 @@ namespace Prediction.Core.Curve.Extremes
             return Extremes.ToArray();
         }
 
-        public GroupArray[] ExtremeGroups(IEnumerable<GroupArray> data)
+        public Extreme[] ExtremeGroups(IEnumerable<Extreme> data)
         {
-            var extremesAscend = data.OrderBy(data => data.Extreme).ToArray();
+            var extremesAscend = data.OrderBy(data => data.Value).ToArray();
             extremesAscend[0].ExtremeGroup = 1;
             int groups = 1;
             int counter = 1;
-            float sumValue = extremesAscend[0].Extreme;
-            float average = extremesAscend[0].Extreme;
+            float sumValue = extremesAscend[0].Value;
+            float average = extremesAscend[0].Value;
             float lastVal = 0;
 
             for (int i = 1; i <= extremesAscend.Length - 1; i++)
             {
                 float peakThresh = average + average * 0.12f;
-                if (extremesAscend[i].Extreme < peakThresh)
+                if (extremesAscend[i].Value < peakThresh)
                 {
 
                     extremesAscend[i].ExtremeGroup = groups;
@@ -51,7 +51,7 @@ namespace Prediction.Core.Curve.Extremes
                         if (extremesAscend[element].ExtremeGroup == groups)
                         {
                             counter++;
-                            sumValue += extremesAscend[element].Extreme;
+                            sumValue += extremesAscend[element].Value;
                         }
                         else if (extremesAscend[element].ExtremeGroup == 0)
                         {
@@ -62,7 +62,7 @@ namespace Prediction.Core.Curve.Extremes
                     counter = 1;
                     if (groups == 1)
                     {
-                        sumValue = extremesAscend[0].Extreme;
+                        sumValue = extremesAscend[0].Value;
                     }
                     else
                     {
@@ -74,16 +74,16 @@ namespace Prediction.Core.Curve.Extremes
                     groups++;
                     counter = 1;
                     extremesAscend[i].ExtremeGroup = groups;
-                    average = extremesAscend[i].Extreme;
-                    lastVal = extremesAscend[i].Extreme;
-                    sumValue = extremesAscend[i].Extreme;
+                    average = extremesAscend[i].Value;
+                    lastVal = extremesAscend[i].Value;
+                    sumValue = extremesAscend[i].Value;
                 }
             }
 
             return extremesAscend;
         }
 
-        public GroupArray[] MergeExtreme(IEnumerable<GroupArray> data)
+        public Extreme[] MergeExtreme(IEnumerable<Extreme> data)
         {
             var extremeGroupAscend = data.OrderBy(data => data.ExtremeGroup).ToArray();
             int pos1 = 0;
@@ -106,7 +106,7 @@ namespace Prediction.Core.Curve.Extremes
                                 posDiff = Math.Abs(pos2 - pos1);
                                 if (posDiff < pos_thresh)
                                 {
-                                    if (extremeGroupAscend[first].Extreme > extremeGroupAscend[second].Extreme)
+                                    if (extremeGroupAscend[first].Value > extremeGroupAscend[second].Value)
                                     {
                                         extremeGroupAscend[first].MergeExtreme = false;
                                         extremeGroupAscend[second].MergeExtreme = true;
@@ -135,13 +135,6 @@ namespace Prediction.Core.Curve.Extremes
         }
     }
 
-    public class GroupArray
-    {
-        public int Time { get; set; }
-        public float Extreme { get; set; }
-        public int ExtremeGroup { get; set; }
-        public bool MergeExtreme { get; set; }
 
-    }
 
 }

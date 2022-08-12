@@ -22,13 +22,13 @@ namespace Prediction.Core
         private static IServiceCollection ConfigureCurve(this IServiceCollection services)
         {
             services.AddSingleton<IDataSmoother, SavGol>();
-            services.AddSingleton<IExtremes, Extremes>();
+            services.AddSingleton<IExtremesFinder, ExtremesFinder>();
             return services;
         }
         private static IServiceCollection ConfigureFilters(this IServiceCollection services)
         {
             services.AddSingleton<IMerger, ExtremeMerger>();
-            services.AddSingleton<IToFrequency, ToFrequency>();
+            services.AddSingleton<IToFrequency, FrequencyTools>();
 
             return services;
         }

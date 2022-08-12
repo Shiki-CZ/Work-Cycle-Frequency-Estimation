@@ -597,10 +597,10 @@ namespace Prediction.ViewModels
             24, 24, 24, 24, 24
         };
 
-        public GraphViewModel(IDataSmoother smoother, IExtremes extreme, IConsole console, IToFrequency frequency)
+        public GraphViewModel(IDataSmoother smoother, IExtremesFinder extremeFinder, IConsole console)
         {
             _console = console;
-            this.OxyGraph = new PlotModel { Title = "Local Extremes" };
+            this.OxyGraph = new PlotModel { Title = "Local ExtremesFinder" };
             LineSeries curve = new LineSeries();
             //LineSeries extremes = new LineSeries();
             //series.MarkerType = MarkerType.Circle;
@@ -612,41 +612,41 @@ namespace Prediction.ViewModels
                 curve.Points.Add(new DataPoint(i, curveData[i]));
             }
 
-            var extremeData = extreme.LocalMaximas(curveData);
-            var extremeGroup = extreme.ExtremeGroups(extremeData);
-            var mergedExtremes = extreme.MergeExtreme(extremeGroup);
-            var freq = frequency.GetFrequencies(mergedExtremes, 0.01f);
+            //var extremeData = extremeFinder.LocalMaximas(curveData);
+            //var extremeGroup = extremeFinder.ExtremeGroups(extremeData);
+            //var mergedExtremes = extremeFinder.MergeExtreme(extremeGroup);
+            //var freq = frequency.GetFrequencies(mergedExtremes, 0.01f);
             //Console.WriteLine("mergedExtremes");
 
             ////////////////////////////////////////////  CONSOLE  ///////////////////////////////////////  CONSOLE  ///////////////////////////////  CONSOLE  //////////////
             //var msg1 = mergedExtremes.Select(value => value.MergeExtreme.ToString()).ToList();
-            //var msg2 = mergedExtremes.Select(value => value.Extreme.ToString()).ToList();
+            //var msg2 = mergedExtremes.Select(value => value.Value.ToString()).ToList();
             //var msg3 = mergedExtremes.Select(value => value.ExtremeGroup.ToString()).ToList();
             //var msg4 = mergedExtremes.Select(value => value.Time.ToString()).ToList();
             //int cnt = 0;
             //foreach (var line in msg1)
             //{
-            //    _console.AddLine("Merged extremes: " + line + "     " + "Extreme: " + msg2[cnt] + "    " +
+            //    _console.AddLine("Merged extremes: " + line + "     " + "Value: " + msg2[cnt] + "    " +
             //                     "Group: " + msg3[cnt] + "     " + "Time: " + msg4[cnt]);
             //    cnt++;
             //}
             //_console.AddLine(cnt.ToString());
 
-            var freq1 = freq.Select(value => value.Time1.ToString()).ToList();
-            var freq2 = freq.Select(value => value.Time2.ToString()).ToList();
-            var freq3 = freq.Select(value => value.Frequency.ToString()).ToList();
-            var freq4 = freq.Select(value => value.FrequencyGroup.ToString()).ToList();
-            var freq41 = freq.Select(value => value.Period.ToString()).ToList();
-            int cnt2 = 0;
-            _console.AddLine(freq4.Count.ToString());
+            //var freq1 = freq.Select(value => value.Time1.ToString()).ToList();
+            //var freq2 = freq.Select(value => value.Time2.ToString()).ToList();
+            //var freq3 = freq.Select(value => value.Frequency.ToString()).ToList();
+            //var freq4 = freq.Select(value => value.FrequencyGroup.ToString()).ToList();
+            //var freq41 = freq.Select(value => value.Period.ToString()).ToList();
+            //int cnt2 = 0;
+            //_console.AddLine(freq4.Count.ToString());
 
-            foreach (var line in freq1)
-            {
-                _console.AddLine("Time1: " + line + "     " + "Time2: " + freq2[cnt2] + "    " +
-                                 "Frequency: " + freq3[cnt2] + "     " + "Group: " + freq4[cnt2] + "        " + "Period: " + freq41[cnt2]);
-                cnt2++;
-            }
-            _console.AddLine(cnt2.ToString());
+            //foreach (var line in freq1)
+            //{
+            //    _console.AddLine("Time1: " + line + "     " + "Time2: " + freq2[cnt2] + "    " +
+            //                     "Frequency: " + freq3[cnt2] + "     " + "Group: " + freq4[cnt2] + "        " + "Period: " + freq41[cnt2]);
+            //    cnt2++;
+            //}
+            //_console.AddLine(cnt2.ToString());
 
             ////////////////////////////////////////////  CONSOLE  ///////////////////////////////////////  CONSOLE  ///////////////////////////////  CONSOLE  //////////////
 
@@ -677,7 +677,7 @@ namespace Prediction.ViewModels
                 extremeSeries.MarkerType = MarkerType.Circle;
                 extremeSeries.LineStyle = LineStyle.None;
                 extremeSeries.Color = colors[group];
-                extremeSeries.Title = "Extremes Group " + group.ToString();
+                extremeSeries.Title = "ExtremesFinder Group " + group.ToString();
                 float min = 1000;
                 float max = -1;
                 float time = 0;
@@ -685,11 +685,11 @@ namespace Prediction.ViewModels
                 {
                     if (group + 1 == item.ExtremeGroup && item.MergeExtreme == false)
                     {
-                        extremeSeries.Points.Add(new DataPoint(item.Time, item.Extreme));
-                        if (item.Extreme < min)
-                            min = item.Extreme;
-                        if (item.Extreme > max)
-                            max = item.Extreme;
+                        extremeSeries.Points.Add(new DataPoint(item.Time, item.Value));
+                        if (item.Value < min)
+                            min = item.Value;
+                        if (item.Value > max)
+                            max = item.Value;
                     }
                     if (item.Time > time)
                         time = item.Time;

@@ -10,7 +10,7 @@ namespace Prediction.Core.Filtrations
 {
     internal class PeriodMerger : IMerger
     {
-        public GroupArray[] Merge(IEnumerable<GroupArray> data)
+        public Extreme[] Merge(IEnumerable<Extreme> data)
         {
             throw new NotImplementedException();
         }

@@ -9,8 +9,8 @@ namespace Prediction.Core.Convertions.Abstraction
 {
     internal interface IFrequencyConverter
     {
-        public GroupArray[] ToPeriod(IEnumerable<GroupArray> data);
+        public Extreme[] ToPeriod(IEnumerable<Extreme> data);
 
-        public GroupArray[] ToExtremes(IEnumerable<GroupArray> data);
+        public Extreme[] ToExtremes(IEnumerable<Extreme> data);
     }
 }

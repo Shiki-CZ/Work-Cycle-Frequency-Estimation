@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
         <Button Command="{Binding OnBtnCmd}"></Button>
         <TabControl>
-            <TabItem Header="Graph Extremes">
+            <TabItem Header="Graph ExtremesFinder">
                 <local:GraphView ></local:GraphView>
             </TabItem>
             <TabItem Header="Graph Frequencies">
