@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Prediction.Core.Analysis;
+using Prediction.Core.Computing.Abstraction;
 using Prediction.Core.Curve.Abstraction;
+using Prediction.Core.Curve.Extremes;
 using Prediction.Core.Curve.Extremes.Abstraction;
 using Prediction.Core.Grouping.Abstraction;
 using Prediction.Core.Grouping;
 namespace Prediction.Core.Computing
 {
-    internal class FrequencyComputer : IFrequencyComputer 
+    public class FrequencyComputer : IFrequencyComputer
     {
         private readonly IDataSmoother _smoother;
         private readonly IExtremesFinder _extremeFinder;
@@ -21,7 +24,20 @@ namespace Prediction.Core.Computing
             _extremeFinder = extremeFinder;
         }
 
-        private int[] Data2 = new[]
+        public void Compute()
+        {
+            CurveData = _smoother.Smooth(Data);
+
+            var extremeData = _extremeFinder.LocalMaximas(CurveData);
+            var extremeGroup = _extremeFinder.ExtremeGroups(extremeData);
+            MergedExtremes = _extremeFinder.MergeExtreme(extremeGroup);
+            Frequency = MergedExtremes.ToFrequencies(0.01f);
+            MainFrequency = Frequency.FindMainFrequency();
+            FrequencyLocator = Frequency.MainFrequencyLocator(MainFrequency);
+
+        }
+
+        public int[] Data = new[]
        {
             24, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 28, 28, 28, 30, 30, 30, 30, 30, 29, 28, 28, 28, 28, 26, 26,
             26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 30, 30, 30,
@@ -493,29 +509,10 @@ namespace Prediction.Core.Computing
             32, 32, 32, 30, 30, 30, 30, 30, 30, 30, 28, 28, 28, 28, 28, 28, 28, 28, 26, 26, 26, 26, 26, 24, 24, 24, 24,
             24, 24, 24, 24, 24
         };
-
-
-        public void Compute()
-        {
-            var curveData = _smoother.Smooth(Data2);
-
-            var extremeData = _extremeFinder.LocalMaximas(curveData);
-            var extremeGroup = _extremeFinder.ExtremeGroups(extremeData);
-            var mergedExtremes = _extremeFinder.MergeExtreme(extremeGroup);
-          Data = mergedExtremes.ToFrequencies(0.01f);
-             
-        }
-
-        public FrequencyArray[] Data { get; private set; }
-    }
-
-    internal interface IFrequencyComputer : IComputer
-    {
-        FrequencyArray[] Data { get; }
-    }
-
-    internal interface IComputer
-    {
-        void Compute();
+        public float[] CurveData { get; private set; }
+        public FrequencyArray[] Frequency { get; private set; }
+        public Extreme[] MergedExtremes { get; private set; }
+        public List<float> MainFrequency { get; private set; }
+        public FrequencyArray[] FrequencyLocator { get; private set; }
     }
 }

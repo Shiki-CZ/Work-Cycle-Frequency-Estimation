@@ -14,13 +14,6 @@ namespace Prediction.Core.Filtrations
         {
             var periodAscend = data.OrderBy(data => data.Period).ToArray();
             var significance = new List<SignificanceArray> { };
-            int time1 = 0;
-            int time2 = 0;
-            float freq = 0;
-            float period = 0;
-            int groupNumber = 0;
-
-
 
             return null;
         }

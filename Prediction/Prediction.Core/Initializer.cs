@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Prediction.Core.Computing;
+using Prediction.Core.Computing.Abstraction;
 using Prediction.Core.Curve;
 using Prediction.Core.Curve.Abstraction;
 using Prediction.Core.Curve.Extremes;
@@ -28,9 +30,10 @@ namespace Prediction.Core
         private static IServiceCollection ConfigureFilters(this IServiceCollection services)
         {
             services.AddSingleton<IMerger, ExtremeMerger>();
-            services.AddSingleton<IToFrequency, FrequencyTools>();
+            services.AddSingleton<IFrequencyComputer, FrequencyComputer>();
 
             return services;
         }
     }
+
 }

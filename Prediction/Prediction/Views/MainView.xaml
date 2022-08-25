@@ -8,7 +8,7 @@
              xmlns:viewModels="clr-namespace:Prediction.ViewModels"
              xmlns:converters="clr-namespace:Prediction.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="750" d:DesignWidth="900"
              d:DataContext="{d:DesignInstance d:Type=viewModels:MainViewModel}">
     <abstraction:IocControl.Resources>
         <converters:BoolToVisibilityConverter
@@ -20,30 +20,31 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="150"></RowDefinition>
         </Grid.RowDefinitions>
-        <Button Command="{Binding OnBtnCmd}"></Button>
-        <TabControl>
-            <TabItem Header="Graph ExtremesFinder">
-                <local:GraphView ></local:GraphView>
-            </TabItem>
-            <TabItem Header="Graph Frequencies">
-                <local:TabTestView ></local:TabTestView>
-            </TabItem>
-            <TabItem Header="Tab 2">
+        <Grid Grid.Row="0">
+               <TabControl>
+                    <TabItem Header="Graph ExtremesFinder">
+                        <local:GraphView ></local:GraphView>
+                    </TabItem>
+                    <TabItem Header="Graph Frequencies">
+                        <local:TabTestView ></local:TabTestView>
+                    </TabItem>
+                    <TabItem Header="Tab 2">
 
-            </TabItem>
+                    </TabItem>
 
-            <TabItem Header="{Binding HeaderName}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToHiddenConverter}}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                   
-                </Grid>
+                    <TabItem Header="{Binding HeaderName}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToHiddenConverter}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-            </TabItem>
-        </TabControl>
+                        </Grid>
+
+                    </TabItem>
+                </TabControl>
+        </Grid>
         <Grid Row="1">
             <local:ConsoleView ></local:ConsoleView>
         </Grid>

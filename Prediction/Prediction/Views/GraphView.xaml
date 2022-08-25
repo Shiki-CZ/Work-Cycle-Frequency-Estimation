@@ -6,10 +6,17 @@
              xmlns:local="clr-namespace:Prediction.Views"
              xmlns:abstraction="clr-namespace:Prediction.Views.Abstraction"
              xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:viewModels="clr-namespace:Prediction.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="800" d:DataContext="{d:DesignInstance viewModels:GraphViewModel}">
     <Grid>
-        <oxy:PlotView Model="{Binding OxyGraph}">
-        </oxy:PlotView >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <oxy:PlotView Grid.Row="0" Model="{Binding OxyGraph}" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button Content="Compute" Command="{Binding ComputeCommand}" ></Button>
+        </StackPanel>
     </Grid>
 </abstraction:IocControl>

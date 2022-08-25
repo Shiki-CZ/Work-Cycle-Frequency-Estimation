@@ -23,8 +23,6 @@ namespace Prediction.Core.Curve.Extremes
                     Extremes.Add(new Extreme { Time = i, Value = data[i] });
             }
 
-            int pos = 0;
-
             return Extremes.ToArray();
         }
 

@@ -33,6 +33,7 @@ namespace Prediction.IocContainer
         public static IServiceCollection ConfigureTools(this IServiceCollection services)
         {
             services.AddSingleton<IConsole, DebugConsole>();
+            services.AddSingleton<ICommandFactory, CommandFactory>();
             return services;
         }
     }
