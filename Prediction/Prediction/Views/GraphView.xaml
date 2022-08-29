@@ -10,13 +10,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="650" d:DesignWidth="800" d:DataContext="{d:DesignInstance viewModels:GraphViewModel}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="40"/>
-        </Grid.RowDefinitions>
-        <oxy:PlotView Grid.Row="0" Model="{Binding OxyGraph}" />
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Button Content="Compute" Command="{Binding ComputeCommand}" ></Button>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <oxy:PlotView Grid.Column="1" Model="{Binding OxyGraph}" />
+        <StackPanel Orientation="Vertical" Grid.Column="0" Background="White">
+            <Button Content="Compute" Command="{Binding ComputeCommand}" Background="CornflowerBlue" Height="40"></Button>
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Label Content="Polynome" Foreground="Black"/>
+                <Separator Width="10" Visibility="Hidden"></Separator>
+                <Label  Content="{Binding PolynomeValue}" Width="20" Foreground="Black"/>
+            </StackPanel>
+            <Slider Value="{Binding SliderValue}" Minimum="2" Maximum="7" TickPlacement="BottomRight" TickFrequency="1"
+                    IsSnapToTickEnabled="True" Width="80" Foreground="Black" Name="PolyValue" ></Slider>
+            <Separator Height="10"></Separator>
+
         </StackPanel>
     </Grid>
 </abstraction:IocControl>

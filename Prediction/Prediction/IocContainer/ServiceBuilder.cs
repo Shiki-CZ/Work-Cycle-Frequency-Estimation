@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prediction.Core;
+using Prediction.DataProvider;
 using Prediction.Tools;
 
 namespace Prediction.IocContainer
@@ -18,6 +19,7 @@ namespace Prediction.IocContainer
             services.ConfigureViewModels();
             services.ConfigurePredictionCore();
             services.ConfigureTools();
+            services.AddDbLayer();
             return services;
         }
 
@@ -34,6 +36,7 @@ namespace Prediction.IocContainer
         {
             services.AddSingleton<IConsole, DebugConsole>();
             services.AddSingleton<ICommandFactory, CommandFactory>();
+            services.AddSingleton<SettingsProvider>();
             return services;
         }
     }

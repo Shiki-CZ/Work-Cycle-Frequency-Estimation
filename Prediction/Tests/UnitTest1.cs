@@ -107,7 +107,7 @@ namespace Tests
                 44, 40, 36, 28, 24, 22, 22, 20, 16, 16, 10, 8, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8
             };
 
-            var res = s.Smooth(array);
+            var res = s.Smooth(array,2);
         }
 
 

@@ -1,22 +1,24 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Input;
-using CenterSpace.NMath.Core;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
+using Prediction.Core.Computing;
 using Prediction.Core.Computing.Abstraction;
-using Prediction.Core.Curve;
 using Prediction.ViewModels.Abstraction;
 using Prediction.Core.Curve.Abstraction;
 using Prediction.Core.Curve.Extremes;
-using Prediction.Core.Curve.Extremes.Abstraction;
-using Prediction.Core.Grouping.Abstraction;
+using Prediction.DataProvider.Mappers;
+using Prediction.DataProvider.QueryBuilders;
 using Prediction.Tools;
+using Prediction.DataProvider.Repositories.Abstraction;
+using SettingsProvider = Prediction.Core.SettingsProvider;
 
 namespace Prediction.ViewModels
 {
@@ -25,7 +27,11 @@ namespace Prediction.ViewModels
         private readonly IDataSmoother _smoother;
         private readonly IFrequencyComputer _frequencyComputer;
         private readonly IConsole _console;
+        private readonly IExtremeRepository _extremeRepository;
+        private readonly SettingsProvider _settingsProvider;
         private PlotModel _oxyGraph;
+        private int _sliderValue;
+        private string _polynomeValue;
 
         public PlotModel OxyGraph
         {
@@ -37,14 +43,54 @@ namespace Prediction.ViewModels
         }
         public ICommand ComputeCommand { get; set; }
 
-        private void Compute()
+        public string PolynomeValue
+        {
+            get => _polynomeValue;
+            set
+            {
+                _polynomeValue = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int SliderValue
+        {
+            get => _sliderValue;
+            set
+            {
+                _sliderValue = value;
+                PolynomeValue = _sliderValue.ToString();
+                _settingsProvider.Poly = _sliderValue;
+                OnPropertyChanged();
+            }
+        }
+
+        private async void Compute()
         {
             _frequencyComputer.Compute();
+            //_frequencyComputer.Compute(new DbFeeder());
+            //_frequencyComputer.Compute(new CoppeliaFeeder());
 
-            this.OxyGraph = new PlotModel {Title = "Local ExtremesFinder"};
+            this.OxyGraph = new PlotModel { Title = "Local ExtremesFinder" };
             List<LineSeries> extremes = new List<LineSeries>();
 
             var mergedExtremes = _frequencyComputer.MergedExtremes;
+
+            var all = await _extremeRepository.All(new ExtremeQueryBuilder(), CancellationToken.None);
+            var ids = all.Select(item => item.Id).ToArray();
+            await _extremeRepository.DeleteAsync(CancellationToken.None, ids);
+
+            foreach (var item in mergedExtremes)
+            {
+                var allInDb = await _extremeRepository.Any(q => q.WithTime(item.Time).WithExtremeGroup(item.ExtremeGroup), CancellationToken.None);
+                var res = all.Find(dto => dto.Equals(item));
+                if (res == null)
+                {
+                    var guid = await _extremeRepository.CreateAsync(item.ToDto(), CancellationToken.None);
+                }
+            }
+
+            var dtoList = await _extremeRepository.All(q => q.WithTimeOrMore(8000), CancellationToken.None);
 
             int colorMax = mergedExtremes.Last().ExtremeGroup;
             float colorStep = 255 / colorMax;
@@ -116,7 +162,7 @@ namespace Prediction.ViewModels
                 minFrequencyDelimiter.Color = OxyColors.Red;
                 minFrequencyDelimiter.Points.Add(new DataPoint(_frequencyComputer.FrequencyLocator[0].Time1, 0));
                 minFrequencyDelimiter.Points.Add(new DataPoint(_frequencyComputer.FrequencyLocator[0].Time1, max));
-                minFrequencyDelimiter.StrokeThickness =3;
+                minFrequencyDelimiter.StrokeThickness = 3;
                 extremes.Add(minFrequencyDelimiter);
 
             }
@@ -164,12 +210,23 @@ namespace Prediction.ViewModels
                              "Found in group: " + group);
 
         }
+        private void SetVal()
+        {
 
-        public GraphViewModel(IDataSmoother smoother, IFrequencyComputer frequencyComputer, IConsole console, ICommandFactory commandFactory)
+        }
+
+        public GraphViewModel(IDataSmoother smoother,
+            IFrequencyComputer frequencyComputer,
+            IConsole console,
+            ICommandFactory commandFactory,
+            IExtremeRepository extremeRepository,
+            SettingsProvider settingsProvider)
         {
             _smoother = smoother;
             _frequencyComputer = frequencyComputer;
             _console = console;
+            _extremeRepository = extremeRepository;
+            _settingsProvider = settingsProvider;
             ComputeCommand = commandFactory.Create(Compute);
         }
 

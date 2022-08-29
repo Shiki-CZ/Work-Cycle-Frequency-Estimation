@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prediction.Core.Curve.Abstraction
+namespace Prediction.Core
 {
-    public interface IDataSmoother
+    public class SettingsProvider
     {
-        public float[] Smooth(int[] data, int poly);
-
+        public int Poly { get; set; } = 2;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Google.OrTools.ConstraintSolver;
 using Prediction.Core.Analysis;
 using Prediction.Core.Computing.Abstraction;
 using Prediction.Core.Curve.Abstraction;
@@ -10,23 +11,40 @@ using Prediction.Core.Curve.Extremes;
 using Prediction.Core.Curve.Extremes.Abstraction;
 using Prediction.Core.Grouping.Abstraction;
 using Prediction.Core.Grouping;
+using Prediction.DataProvider.QueryBuilders;
+using Prediction.DataProvider.Repositories.Abstraction;
+
 namespace Prediction.Core.Computing
 {
     public class FrequencyComputer : IFrequencyComputer
     {
         private readonly IDataSmoother _smoother;
         private readonly IExtremesFinder _extremeFinder;
+        private readonly SettingsProvider _settingsProvider;
 
 
-        public FrequencyComputer(IDataSmoother smoother, IExtremesFinder extremeFinder)
+        public FrequencyComputer(IDataSmoother smoother, IExtremesFinder extremeFinder, SettingsProvider settingsProvider)
         {
             _smoother = smoother;
             _extremeFinder = extremeFinder;
+            _settingsProvider = settingsProvider;
         }
-
+        //public async void Compute(IDataFeeder feeder)
         public void Compute()
         {
-            CurveData = _smoother.Smooth(Data);
+            CurveData = _smoother.Smooth(Data, _settingsProvider.Poly);
+            //CurveData = new float[10000];
+
+            //for (int i = 0; i < 10000; i++)
+            //{
+            //    var x = i * 0.01;
+            //    float f = (float)(-0.5 * Math.Sin((x * Math.PI) / 2) + 2 * Math.Sin(x / 0.5) + Math.Sin(x));
+            //    CurveData[i] = f;
+            //}
+            //var res = feeder.GetData();
+
+
+            //CurveData = await res;
 
             var extremeData = _extremeFinder.LocalMaximas(CurveData);
             var extremeGroup = _extremeFinder.ExtremeGroups(extremeData);
@@ -38,7 +56,7 @@ namespace Prediction.Core.Computing
         }
 
         public int[] Data = new[]
-       {
+        {
             24, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 28, 28, 28, 30, 30, 30, 30, 30, 29, 28, 28, 28, 28, 26, 26,
             26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 30, 30, 30,
             30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 32, 32, 32, 32, 34, 34, 34, 34, 34, 35, 37, 38, 38, 38, 38, 38,
@@ -509,10 +527,43 @@ namespace Prediction.Core.Computing
             32, 32, 32, 30, 30, 30, 30, 30, 30, 30, 28, 28, 28, 28, 28, 28, 28, 28, 26, 26, 26, 26, 26, 24, 24, 24, 24,
             24, 24, 24, 24, 24
         };
+
         public float[] CurveData { get; private set; }
         public FrequencyArray[] Frequency { get; private set; }
         public Extreme[] MergedExtremes { get; private set; }
         public List<float> MainFrequency { get; private set; }
         public FrequencyArray[] FrequencyLocator { get; private set; }
+
+    }
+
+    public interface IDataFeeder
+    {
+
+        Task<float[]> GetData();
+    }
+
+    public class DbFeeder : IDataFeeder
+    {
+        private readonly IExtremeRepository _extremeRepository;
+
+        public DbFeeder(IExtremeRepository extremeRepository)
+        {
+            _extremeRepository = extremeRepository;
+        }
+
+        public async Task<float[]> GetData()
+        {
+            var data = await _extremeRepository.All(new ExtremeQueryBuilder(), CancellationToken.None);
+            var res = data.Select(d => d.Value).ToArray();
+            return res;
+        }
+    }
+
+    public class CoppeliaFeeder : IDataFeeder
+    {
+        public Task<float[]> GetData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
