@@ -17,20 +17,14 @@ using Prediction.ViewModels;
 namespace Prediction.Views
 {
     /// <summary>
-    /// Interaction logic for ConsoleView.xaml
+    /// Interaction logic for PeriodGraphView.xaml
     /// </summary>
-    public partial class ConsoleView
+    public partial class TabTestView
     {
-        public ConsoleView()
+        public TabTestView()
         {
             InitializeComponent();
-            UseViewModel<ConsoleViewModel>();
-            ConsoleView_OnTextChanged(); ;
-        }
-
-        public void ConsoleView_OnTextChanged()
-        {
-            console.ScrollToEnd();
+            UseViewModel<PeriodGraphViewModel>();
         }
     }
 }

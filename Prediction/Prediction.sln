@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prediction.Core", "Predicti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{BF941D32-9711-403D-84DB-8A570913B8B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prediction.DataProvider", "Prediction.DataProvider\Prediction.DataProvider.csproj", "{63293407-C6BE-4462-AC0B-512D54928790}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prediction.DataProvider", "Prediction.DataProvider\Prediction.DataProvider.csproj", "{63293407-C6BE-4462-AC0B-512D54928790}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoppeliaSim", "..\..\CoppeliaSim\CoppeliaSim\CoppeliaSim.csproj", "{9E6DDD24-B6AE-4860-A8C3-2434FCF681BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{63293407-C6BE-4462-AC0B-512D54928790}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63293407-C6BE-4462-AC0B-512D54928790}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63293407-C6BE-4462-AC0B-512D54928790}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E6DDD24-B6AE-4860-A8C3-2434FCF681BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E6DDD24-B6AE-4860-A8C3-2434FCF681BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E6DDD24-B6AE-4860-A8C3-2434FCF681BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E6DDD24-B6AE-4860-A8C3-2434FCF681BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

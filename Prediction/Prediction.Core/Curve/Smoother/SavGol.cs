@@ -10,12 +10,12 @@ namespace Prediction.Core.Curve;
 
 public class SavGol : IDataSmoother
 {
-    public float[] Smooth(int[] data, int poly)
+    public float[] Smooth(int[] data, int polynome, int smoothRange)
     {
-        int numberLeft = 91;
-        int numberRight = 91;
+        int numberLeft = smoothRange;
+        int numberRight = smoothRange;
 
-        SavitzkyGolayFilter sgf = new SavitzkyGolayFilter(numberLeft, numberRight, poly);
+        SavitzkyGolayFilter sgf = new SavitzkyGolayFilter(numberLeft, numberRight, polynome);
         DoubleVector input = new DoubleVector();
         foreach (var item in data)
         {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Prediction.Tools;
 
 namespace Prediction.ViewModels
 {
@@ -25,9 +26,9 @@ namespace Prediction.ViewModels
 
         public ICommand OnBtnCmd { get; set; }
 
-        public MainViewModel()
+        public MainViewModel(ICommandFactory commandFactory)
         {
-            OnBtnCmd = new Command(OnButton);
+            OnBtnCmd = commandFactory.Create(OnButton);
         }
 
         private void OnButton()

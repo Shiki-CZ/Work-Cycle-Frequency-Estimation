@@ -8,7 +8,7 @@ namespace Prediction.Core.Curve.Abstraction
 {
     public interface IDataSmoother
     {
-        public float[] Smooth(int[] data, int poly);
+        public float[] Smooth(int[] data, int polynome, int smoothRange);
 
     }
 }

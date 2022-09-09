@@ -8,7 +8,7 @@
              xmlns:viewModels="clr-namespace:Prediction.ViewModels"
              xmlns:converters="clr-namespace:Prediction.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="750" d:DesignWidth="900"
+             d:DesignHeight="700" d:DesignWidth="1000" 
              d:DataContext="{d:DesignInstance d:Type=viewModels:MainViewModel}">
     <abstraction:IocControl.Resources>
         <converters:BoolToVisibilityConverter
@@ -17,15 +17,15 @@
     </abstraction:IocControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="150"></RowDefinition>
+            <RowDefinition/>
+            <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" >
                <TabControl>
-                    <TabItem Header="Graph ExtremesFinder">
+                <TabItem Header="Extremes Graph">
                         <local:GraphView ></local:GraphView>
                     </TabItem>
-                    <TabItem Header="Graph Frequencies">
+                    <TabItem Header="Periods Graph">
                         <local:TabTestView ></local:TabTestView>
                     </TabItem>
                     <TabItem Header="Tab 2">
@@ -45,7 +45,7 @@
                     </TabItem>
                 </TabControl>
         </Grid>
-        <Grid Row="1">
+        <Grid Row="1" Height="150">
             <local:ConsoleView ></local:ConsoleView>
         </Grid>
     </Grid>

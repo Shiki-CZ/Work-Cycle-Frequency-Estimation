@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CoppeliaSim\CoppeliaSim\CoppeliaSim.csproj" />
     <ProjectReference Include="..\Prediction.Core\Prediction.Core.csproj" />
     <ProjectReference Include="..\Prediction.DataProvider\Prediction.DataProvider.csproj" />
   </ItemGroup>

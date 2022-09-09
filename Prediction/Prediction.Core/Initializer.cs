@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CoppeliaSim;
+using Microsoft.Extensions.DependencyInjection;
 using Prediction.Core.Computing;
 using Prediction.Core.Computing.Abstraction;
 using Prediction.Core.Curve;
@@ -18,6 +19,7 @@ namespace Prediction.Core
         {
             services.ConfigureCurve();
             services.ConfigureFilters();
+            services.ConfigureDataFeed();
             return services;
         }
 
@@ -29,11 +31,14 @@ namespace Prediction.Core
         }
         private static IServiceCollection ConfigureFilters(this IServiceCollection services)
         {
-            services.AddSingleton<IMerger, ExtremeMerger>();
-            services.AddSingleton<IFrequencyComputer, FrequencyComputer>();
+            services.AddSingleton<IComputer, Computer>();
+            return services;
+        }
 
+        private static IServiceCollection ConfigureDataFeed(this IServiceCollection services)
+        {
+            services.AddSingleton<ICoppeliaSimBase, SimBase>();
             return services;
         }
     }
-
 }

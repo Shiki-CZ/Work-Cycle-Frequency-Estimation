@@ -9,9 +9,21 @@ namespace Prediction.Tools
 {
     public class CommandFactory : ICommandFactory
     {
-        public ICommand Create(Action action)
+        public ICommand Create(Func<Task> action)
         {
             return new Command(action);
         }
+
+        public ICommand Create(Action action)
+        {
+            Task AsyncWrapper()
+            {
+                action();
+                return Task.CompletedTask;
+            }
+
+            return new Command(AsyncWrapper);
+        }
+
     }
 }

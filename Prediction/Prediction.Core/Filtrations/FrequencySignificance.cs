@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prediction.Core.Filtrations.Abstraction;
+using Prediction.Core.Frequencies;
 using Prediction.Core.Grouping;
 
 namespace Prediction.Core.Filtrations
@@ -17,14 +18,5 @@ namespace Prediction.Core.Filtrations
 
             return null;
         }
-    }
-
-    public class SignificanceArray
-    {
-        public int Period { get; set; }
-        public float Frequency { get; set; }
-        public int Group { get; set; }
-        public bool Significance { get; set; }
-
     }
 }

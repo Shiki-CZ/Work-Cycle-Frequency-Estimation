@@ -13,6 +13,8 @@ namespace Prediction.ViewModels
         private readonly IConsole _console;
         private string _text;
 
+        public event Action OnTextChanged;
+
         public string Text
         {
             get => _text;
@@ -20,7 +22,8 @@ namespace Prediction.ViewModels
             {
                 _text = value;
                 OnPropertyChanged();
-            }
+                OnTextChanged?.Invoke();
+        }
         }
 
         public ConsoleViewModel(IConsole console)
