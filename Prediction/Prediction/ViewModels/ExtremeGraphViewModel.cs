@@ -121,7 +121,6 @@ namespace Prediction.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public bool GroupDelimiterValue
         {
             get => _groupDelimiterValue;
